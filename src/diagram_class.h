@@ -36,6 +36,8 @@ class DiagramClass{
         void loadDiagram(string filename);
         void saveDiagram(string filename);
 
+        
+        void print();
 };
 
 

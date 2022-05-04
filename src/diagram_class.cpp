@@ -99,14 +99,12 @@ void split_string(string str, vector<string> *vec){
         vec->push_back(str.substr(start, end - start));
     }
 
-    cerr << str << endl;
-
 }
 
 void vtos(string *str, vector<string> vector) {
     for( auto s : vector){
-        str->append(" ");
         str->append(s);
+        str->append(" ");
     }
 }
 
@@ -181,6 +179,7 @@ void DiagramClass::loadDiagram(string filename){
         } else if (lineVector.at(0) == "attribute"){
             int id = stoi(lineVector.at(1));
             Visibility visibility = static_cast<Visibility>( stoi(lineVector.at(2)));
+            cout << lineVector.at(2) << "tu" << endl;
             string name = lineVector.at(3);
             string return_type = lineVector.at(4);
 
@@ -210,19 +209,19 @@ void DiagramClass::saveDiagram(string filename){
 
     buffer << "title " << this->name << endl;
     buffer << "nextclassid " << this->next_class_id << endl;
-    buffer << "nextrelationid " << this->next_relation_id << endl;
+    buffer << "nextrelationid " << this->next_relation_id << endl << endl;
 
     for (auto cls: classList) {
         buffer << "class " << cls->getID() << " " << cls->getName() << " " << cls->getInterface() << " ";
         buffer << endl;
         
         for(auto atr : cls->getAttribVector()){
-            buffer << "attribute " << atr->getID() << " " << atr->getVisibilityStr() + " " + atr->getName(); 
+            buffer << "attribute " << atr->getID() << " " << static_cast<int>(atr->getVisibility()) << " " << atr->getName(); 
             buffer << " " << atr->getType() << endl;
         }
                 
         for(auto met : cls->getMethodVector()){
-            buffer << "method " << met->getID() << " " << met->getVisibilityStr() << " ";
+            buffer << "method " << met->getID() << " " << static_cast<int>(met->getVisibility()) << " ";
             buffer << met->getName() << " " << met->getReturnType() << " " << met->getParameters() << endl;
         }
 
@@ -237,10 +236,20 @@ void DiagramClass::saveDiagram(string filename){
 
 }
 
+void DiagramClass::print(){
+
+    for (auto i: classList){
+        cout << i->getName() << " ";
+    }
+
+}
+/**
 int main(){
     
     DiagramClass dg;
 
     dg.loadDiagram("d5.txt");
-
+    dg.print();
+    dg.saveDiagram("d5_text.txt");
 }
+*/
