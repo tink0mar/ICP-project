@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Class and sequence diagrams editor</string>
   </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -78,15 +81,48 @@
      <x>0</x>
      <y>0</y>
      <width>1192</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <widget class="QMenu" name="menuFile">
+    <property name="geometry">
+     <rect>
+      <x>339</x>
+      <y>102</y>
+      <width>186</width>
+      <height>209</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="locale">
+     <locale language="English" country="UnitedStates"/>
+    </property>
+    <property name="tearOffEnabled">
+     <bool>false</bool>
+    </property>
     <property name="title">
      <string>File</string>
     </property>
     <addaction name="actionNew_class_diagram"/>
     <addaction name="actionNew_sequence_diagram"/>
+    <addaction name="separator"/>
+    <addaction name="actionLoad_class_diagram"/>
+    <addaction name="actionLoad_sequence_diagram"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_diagram"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -107,6 +143,26 @@
   <action name="actionNew_sequence_diagram">
    <property name="text">
     <string>New sequence diagram</string>
+   </property>
+  </action>
+  <action name="actionLoad_class_diagram">
+   <property name="text">
+    <string>Load class diagram</string>
+   </property>
+  </action>
+  <action name="actionLoad_sequence_diagram">
+   <property name="text">
+    <string>Load sequence diagram</string>
+   </property>
+  </action>
+  <action name="actionSave_diagram">
+   <property name="text">
+    <string>Save diagram</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
    </property>
   </action>
  </widget>

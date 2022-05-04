@@ -15,7 +15,7 @@ TEMPLATE = app
 # any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
+# DEFINES += QT_DEPRECATED_WARNINGS
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -25,15 +25,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    addobjectdialog.cpp \
+    d_class_properties.cpp \
+    diagram_class.cpp \
         main.cpp \
         mainwindow.cpp \
-    clsdgrwidget.cpp
+    clsdgrwidget.cpp \
+    seqdiagram.cpp \
+    seqdiagramwidget.cpp \
+    seqevent.cpp \
+    seqobject.cpp
 
 HEADERS += \
+    addobjectdialog.h \
+    d_class_properties.h \
+    diagram_class.h \
         mainwindow.h \
-    clsdgrwidget.h
+    clsdgrwidget.h \
+    seqdiagram.h \
+    seqdiagramwidget.h \
+    seqevent.h \
+    seqobject.h
 
 FORMS += \
+        addobjectdialog.ui \
         mainwindow.ui
 
 # Default rules for deployment.

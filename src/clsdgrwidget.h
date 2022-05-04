@@ -4,12 +4,14 @@
 #include <QWidget>
 #include <QPainter>
 #include "QMouseEvent"
+#include "diagram_class.h"
 
-class clsdgrWidget : public QWidget
+class ClsDiagramWidget : public QWidget
 {
 public:
-    clsdgrWidget();
+    ClsDiagramWidget();
 
+    void CreateNewClsDiagram(QString diagramName);
 protected:
     void paintEvent(QPaintEvent *);
     void mouseMoveEvent(QMouseEvent *event);
@@ -26,6 +28,7 @@ private:
     bool vnutri;
     int mousex;
     int mousey;
+    DiagramClass* clsDiagram;
 };
 
 

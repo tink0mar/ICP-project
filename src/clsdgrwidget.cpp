@@ -1,7 +1,8 @@
 #include "clsdgrwidget.h"
+#include <QUuid>
 
 
-clsdgrWidget::clsdgrWidget()
+ClsDiagramWidget::ClsDiagramWidget()
 {
     sx=100;
     sy=100;
@@ -11,13 +12,29 @@ clsdgrWidget::clsdgrWidget()
     setMouseTracking(true);
 }
 
-void clsdgrWidget::paintEvent(QPaintEvent *)
+void ClsDiagramWidget::CreateNewClsDiagram(QString diagramName){
+
+        QString uuid = QUuid::createUuid().toString();
+        clsDiagram = new DiagramClass(diagramName.toStdString());
+        clsDiagram->appendClass("class1", 0, 0);
+        Class* cls = clsDiagram->getClass(1);
+        cls->appendAttribute(0, Visibility::T_public, "atr1", "string");
+        //dTried.NastavUUID(uuid);
+        repaint();
+    }
+
+void ClsDiagramWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-    painter.drawRect(sx-vx/2,sy-vy/2,vx,vy);
+    for(Class* c : clsDiagram->classList){
+        //Dorobit kreslenie
+        painter.drawRect(sx-vx/2,sy-vy/2,vx,vy);
+    }
+
 }
 
-void clsdgrWidget::mouseMoveEvent(QMouseEvent *event)
+
+void ClsDiagramWidget::mouseMoveEvent(QMouseEvent *event)
 {
     int mx=event->x();
     int my=event->y();
@@ -52,7 +69,7 @@ void clsdgrWidget::mouseMoveEvent(QMouseEvent *event)
     event->accept();
 }
 
-void clsdgrWidget::mousePressEvent(QMouseEvent *event)
+void ClsDiagramWidget::mousePressEvent(QMouseEvent *event)
 {
     int mx=event->x();
     int my=event->y();
@@ -65,7 +82,7 @@ void clsdgrWidget::mousePressEvent(QMouseEvent *event)
     event->accept();
 }
 
-void clsdgrWidget::mouseReleaseEvent(QMouseEvent *event){
+void ClsDiagramWidget::mouseReleaseEvent(QMouseEvent *event){
     //int mx=event->x();
     //int my=event->y();
     if(event->button()==Qt::LeftButton){

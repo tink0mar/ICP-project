@@ -18,6 +18,16 @@ public:
 private slots:
     void on_actionNew_class_diagram_triggered();
 
+    void on_actionNew_sequence_diagram_triggered();
+
+    void on_actionLoad_class_diagram_triggered();
+
+    void on_actionLoad_sequence_diagram_triggered();
+
+    void on_actionSave_diagram_triggered();
+
+    void on_actionQuit_triggered();
+
 private:
     Ui::MainWindow *ui;
 };
