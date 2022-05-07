@@ -1,50 +1,47 @@
 #include "seqevent.h"
 #include "seqobject.h"
 
-SeqEvent::SeqEvent(int t1, int t2, TypUdalosti typ, QString nazov, int id, int order)
+SeqEvent::SeqEvent(int t1, int t2, EventType type, QString name, int id, int order)
 {
     this->id = id;
     this->t1 = t1;
     this->t2 = t2;
-    this->typ = typ;
-    this->nazov = nazov;
+    this->type = type;
+    this->name = name;
     this->order = order;
 }
-int SeqEvent::ID(){
+int SeqEvent::GetID(){
         return id;
     }
 
-    /** Získanie názvu udalosti
-     * @return Reťazec reprezentujúci názov
-     */
-QString SeqEvent::UdlNazov(){
-        return nazov;
+QString SeqEvent::GetEventName(){
+        return name;
     }
 
-int SeqEvent::Order(){
+int SeqEvent::GetOrder(){
         return order;
     }
 
-void SeqEvent::NastavPoradie(int order){
+void SeqEvent::SetOrder(int order){
         this->order = order;
     }
 
-void SeqEvent::ZmenaUldNazov(QString novyNazov){
-        nazov = novyNazov;
+void SeqEvent::ChangeEventName(QString newName){
+        name = newName;
     }
 
-int SeqEvent::UdlTrieda1ID(){
+int SeqEvent::GetEventClass1ID(){
         return t1;
     }
 
-int SeqEvent::UdlTrieda2ID(){
+int SeqEvent::GetEventClass2ID(){
         return t2;
     }
 
-QString SeqEvent::UdlTypStr(){
-        return QString::number(typ);
+QString SeqEvent::GetEventTypeStr(){
+        return QString::number(type);
     }
 
-TypUdalosti SeqEvent::UdlTyp(){
-        return typ;
+EventType SeqEvent::GetEventUdlType(){
+        return type;
     }

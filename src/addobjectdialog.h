@@ -15,6 +15,9 @@ public:
     explicit AddObjectDialog(QWidget *parent = nullptr);
     ~AddObjectDialog();
 
+    void SetClasses(QStringList classes);
+    QString GetName();
+    QString GetType();
 private slots:
     void on_btnOK_clicked();
 
@@ -22,6 +25,8 @@ private slots:
 
 private:
     Ui::AddObjectDialog *ui;
+    QString name;
+    QString type;
 };
 
 #endif // ADDOBJECTDIALOG_H

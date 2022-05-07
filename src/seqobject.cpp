@@ -1,36 +1,35 @@
 #include "seqobject.h"
 
-SeqObject::SeqObject(QString nazov, QString typ, int id, int idTriedy)
+SeqObject::SeqObject(QString name, int id, int classID)
 {
     this->id = id;
-    this->nazov = nazov;
-    this->typ = typ;
-    this->idTriedy = idTriedy;
+    this->name = name;
+    this->classID = classID;
     this->sx = 100;
     this->sy = 100;
     this->vx = 100;
     this->vy = 50;
 }
 
-void SeqObject::NastavPoziciu(int px){
+void SeqObject::SetPosition(int px){
       sx = px;
   }
 
-void SeqObject::UpravPoziciu(int offX){
+void SeqObject::ChangePosition(int offX){
       sx = sx + offX;
   }
 
-void SeqObject::NastavPoziciuCreate(int px, int py){
+void SeqObject::SetPositionCreate(int px, int py){
       sx = px;
       sy = py;
   }
 
-void SeqObject::NastavVelkost(int sirka, int vyska){
-      vx = sirka;
-      vy = vyska;
+void SeqObject::SetSize(int width, int height){
+      vx = width;
+      vy = height;
   }
 
-void SeqObject::UpravVelkost(int offX, int offY){
+void SeqObject::ChangeSize(int offX, int offY){
       if(vx+offX > 50){
           vx = vx + offX;
       }
@@ -54,30 +53,30 @@ int SeqObject::surVY(){
       return vy;
   }
 
-QString SeqObject::Suradnice(){
+QString SeqObject::Coordinates(){
       return QString::number(sx) + " " + QString::number(sy) + " " + QString::number(vx) + " " + QString::number(vy);
   }
 
-QString SeqObject::ObjNazov(){
-      return nazov;
+QString SeqObject::GetObjName(){
+      return name;
   }
 
-int SeqObject::IDTriedy(){
-      return idTriedy;
+int SeqObject::GetClassID(){
+      return classID;
   }
 
-void SeqObject::ZmenaObjNazvu(QString novyNazov){
-      nazov = novyNazov;
+void SeqObject::ChangeObjName(QString newName){
+      name = newName;
   }
 
-QString SeqObject::ObjTyp(){
-      return typ;
+int SeqObject::GetObjType(){
+      return classID;
   }
 
-void SeqObject::ZmenaObjTypu(QString novyTyp){
-      typ = novyTyp;
+void SeqObject::ChangeObjType(int classID){
+      this->classID = classID;
   }
 
-int SeqObject::ID(){
+int SeqObject::GetID(){
       return id;
   }

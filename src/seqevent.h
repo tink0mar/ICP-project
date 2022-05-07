@@ -2,36 +2,36 @@
 #define SEQEVENT_H
 #include <QString>
 
-enum TypUdalosti {
-    SYNCHRONNA_SPRAVA,
-    ASYNCHRONNA_SPRAVA,
-    NAVRAT_SPRAVY,
-    TVORBA_OBJEKTU,
-    ZANIK_OBJEKTU,
-    AKTIVACIA,
-    DEAKTIVACIA
+enum EventType {
+    SYNCHRONOUS_MESSAGE,
+    ASYNCHRONOUS_MESSAGE,
+    RETURN_MESSAGE,
+    CREATE_OBJECT,
+    DESTROY_OBJECT,
+    ACTIVATION,
+    DEACTIVATION
 };
 
 class SeqEvent
 {
 public:
-    SeqEvent(int t1, int t2, TypUdalosti typ, QString nazov, int id, int order);
-    int ID();
-    QString UdlNazov();
-    int Order();
-    void NastavPoradie(int order);
-    void ZmenaUldNazov(QString novyNazov);
-    int UdlTrieda1ID();
-    int UdlTrieda2ID();
-    TypUdalosti UdlTyp();
-    void ZmenaUldTypu(int novyTyp);
-    QString UdlTypStr();
+    SeqEvent(int t1, int t2, EventType type, QString name, int id, int order);
+    int GetID();
+    QString GetEventName();
+    void SetOrder(int order);
+    void ChangeEventName(QString newName);
+    int GetEventClass1ID();
+    int GetEventClass2ID();
+    EventType GetEventUdlType();
+    void ZmenaUldTypu(int newType);
+    QString GetEventTypeStr();
+    int GetOrder();
 private:
     int id;
     int t1;
     int t2;
-    TypUdalosti typ;
-    QString nazov;
+    EventType type;
+    QString name;
     int order;
 };
 

@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
+#include "clsdgrwidget.h"
+#include "seqdiagramwidget.h"
 #include <QMainWindow>
 
 namespace Ui {
@@ -30,6 +31,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    ClsDiagramWidget* cdw;
+    QList<SeqDiagram*> sdList;
 };
 
 #endif // MAINWINDOW_H

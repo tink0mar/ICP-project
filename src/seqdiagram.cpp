@@ -2,176 +2,304 @@
 #include "seqevent.h"
 #include "seqobject.h"
 
+#include <QFile>
+#include <QIODevice>
 
-SeqDiagram::SeqDiagram(QString nazov, DiagramTried *dTried)
+
+SeqDiagram::SeqDiagram(QString name, DiagramClass *classD)
 {
-    idUdalosti = 1;
-    idObjektu = 1;
-    poradUdalosti = 1;
-    this->nazov = nazov;
-    zoznamObjektov.clear();
-    zoznamUdalosti.clear();
-    this->dTried = dTried;
+    eventID = 1;
+    objectID = 1;
+    eventOrder = 1;
+    this->name = name;
+    objectList.clear();
+    eventList.clear();
+    this->classD = classD;
     uuid = "";
-    zakladnaY = 0;
+    baseY = 0;
 }
 
-QString SeqDiagram::Nazov(){
-       return nazov;
-   }
+QString SeqDiagram::GetName(){
+    return name;
+}
 
-void SeqDiagram::NastavUUID(QString uuid){
-       this->uuid = uuid;
-   }
+void SeqDiagram::SetUUID(QString uuid){
+    this->uuid = uuid;
+}
 
-void SeqDiagram::NastavZakladnu(int zakladnaY){
-       this->zakladnaY = zakladnaY;
-   }
+void SeqDiagram::SetBase(int baseY){
+    this->baseY = baseY;
+}
 
-QString SeqDiagram::UUID(){
-       return uuid;
-   }
+QString SeqDiagram::SetUUID(){
+    return uuid;
+}
 
-QList<SeqObject> SeqDiagram::ZoznamObjektov(){
-       return zoznamObjektov;
-   }
+QList<SeqObject> SeqDiagram::GetObjectList(){
+    return objectList;
+}
 
-QList<SeqEvent> SeqDiagram::ZoznamUdalosti(){
-       return zoznamUdalosti;
-   }
+QList<SeqEvent> SeqDiagram::GetEventList(){
+    return eventList;
+}
 
-SeqObject* SeqDiagram::NajdiObjekt(int id){
+SeqObject* SeqDiagram::FindObject(int id){
 
-    for( int i=0; i<zoznamObjektov.count(); ++i ){
+    for( int i = 0; i < objectList.count(); ++i ){
 
-           if(zoznamObjektov[i].ID() == id){
-               return &zoznamObjektov[i];
-           }
-       }
-       return NULL;
-   }
-SeqEvent* SeqDiagram::NajdiUdalost(int id){
-       for( int i=0; i<zoznamUdalosti.count(); ++i ){
-           if(zoznamUdalosti[i].ID() == id){
-               return &zoznamUdalosti[i];
-           }
-       }
-       return NULL;
-   }
-
-SeqEvent* SeqDiagram::NajdiUdalostOrder(int order){
-       for( int i=0; i<zoznamUdalosti.count(); ++i ){
-           if(zoznamUdalosti[i].Order() == order){
-               return &zoznamUdalosti[i];
-           }
-       }
-       return NULL;
-   }
-
-SeqObject* SeqDiagram::PridajObjekt(QString nazov, int id, int idTriedy){
-        if(id == 0){
-            id = idObjektu++;
-        }
-        if(dTried->NajdiTriedu(idTriedy) != nullptr){
-            Trieda* t = dTried->NajdiTriedu(idTriedy);
-            SeqObject* obj = new SeqObject(nazov, t->Nazov(), id, idTriedy);
-            zoznamObjektov.append(*obj);
-            return &zoznamObjektov[zoznamObjektov.count()-1];
-        }
-        return NULL;
-    }
-
-void SeqDiagram::UpravObjekt(QString novyNazov, QString novyTyp, int id){
-        for( int i=0; i<zoznamObjektov.count(); ++i ){
-            if(zoznamObjektov[i].ID() == id){
-                zoznamObjektov[i].ZmenaObjNazvu(novyNazov);
-                zoznamObjektov[i].ZmenaObjTypu(novyTyp);
-            }
+        if(objectList[i].GetID() == id){
+            return &objectList[i];
         }
     }
+    return NULL;
+}
 
-void SeqDiagram::ZrusenieObjektu(int id){
-        for( int i=0; i<zoznamObjektov.count(); ++i ){
-            if(zoznamObjektov[i].ID() == id){
-                for(int j = zoznamUdalosti.size()-1; j >= 0; j--){
-                    SeqEvent evt = zoznamUdalosti[j];
-                    if(evt.UdlTrieda1ID() == zoznamObjektov[i].ID() || evt.UdlTrieda2ID() == zoznamObjektov[i].ID()){
-                        zoznamUdalosti.remove(j);
-                    }
+SeqEvent* SeqDiagram::FindEvent(int id){
+    for( int i=0; i<eventList.count(); ++i ){
+        if(eventList[i].GetID() == id){
+            return &eventList[i];
+        }
+    }
+    return NULL;
+}
+
+SeqEvent* SeqDiagram::FindEventOrder(int order){
+    for( int i=0; i<eventList.count(); ++i ){
+        if(eventList[i].GetOrder() == order){
+            return &eventList[i];
+        }
+    }
+    return NULL;
+}
+
+SeqObject* SeqDiagram::AddObject(QString name, int id, int classID){
+    if(id == 0){
+        id = objectID++;
+    }
+    SeqObject* obj = new SeqObject(name, id, classID);
+    objectList.append(*obj);
+    return &objectList[objectList.count()-1];
+}
+
+void SeqDiagram::EditObject(QString newName, int classID, int id){
+    for( int i=0; i<objectList.count(); ++i ){
+        if(objectList[i].GetID() == id){
+            objectList[i].ChangeObjName(newName);
+            objectList[i].ChangeObjType(classID);
+        }
+    }
+}
+
+void SeqDiagram::DeleteObject(int id){
+    for(int i=0; i<objectList.count(); ++i){
+        if(objectList[i].GetID() == id){
+            for(int j = eventList.size()-1; j >= 0; j--){
+                SeqEvent evt = eventList[j];
+                if(evt.GetEventClass1ID() == objectList[i].GetID() || evt.GetEventClass2ID() == objectList[i].GetID()){
+                    DeleteEvent(evt.GetID());
                 }
-                zoznamObjektov.remove(i);
-                return;
             }
-        }
-    }
-
-void SeqDiagram::PridajUdalost(int o1, int o2, TypUdalosti typ, QString popis, int id, int order, int zakladnaY){
-        if(id == 0){
-            id = idUdalosti++;
-        }
-        if(order == 0){
-            order = poradUdalosti++;
-        }
-        SeqEvent* evt = new SeqEvent(o1, o2, typ, popis, id, order);
-        zoznamUdalosti.append(*evt);
-        if(typ == TypUdalosti::TVORBA_OBJEKTU){
-            SeqObject* o = NajdiObjekt(o2);
-            o->NastavPoziciuCreate(o->surSX(), zakladnaY+order*50);
-        }
-    }
-
-void SeqDiagram::UpravUdalost(QString novyPopis, int id){
-        for( int i=0; i<zoznamUdalosti.count(); ++i ){
-            if(zoznamUdalosti[i].ID() == id){
-                zoznamUdalosti[i].ZmenaUldNazov(novyPopis);
-            }
-        }
-    }
-
-void SeqDiagram::PresunUdalostDole(int id){
-        SeqEvent* evt1 = NajdiUdalost(id);
-        if(evt1->Order()+1 == poradUdalosti){
+            objectList.remove(i);
             return;
         }
-        SeqEvent* evt2 = NajdiUdalostOrder(evt1->Order()+1);
-        evt2->NastavPoradie(evt1->Order());
-        evt1->NastavPoradie(evt1->Order()+1);
-        if(evt1->UdlTyp() == TypUdalosti::TVORBA_OBJEKTU){
-            SeqObject* o = NajdiObjekt(evt1->UdlTrieda2ID());
-            o->NastavPoziciuCreate(o->surSX(), evt1->Order()*50+zakladnaY);
-        }
-        if(evt2->UdlTyp() == TypUdalosti::TVORBA_OBJEKTU){
-            SeqObject* o = NajdiObjekt(evt2->UdlTrieda2ID());
-            o->NastavPoziciuCreate(o->surSX(), evt2->Order()*50+zakladnaY);
+    }
+}
+
+void SeqDiagram::PridajUdalost(int o1, int o2, EventType type, QString msg, int id, int order, int baseY){
+    if(id == 0){
+        id = eventID++;
+    }
+    if(order == 0){
+        order = eventOrder++;
+    }
+    SeqEvent* evt = new SeqEvent(o1, o2, type, msg, id, order);
+    eventList.append(*evt);
+    if(type == EventType::CREATE_OBJECT){
+        SeqObject* o = FindObject(o2);
+        o->SetPositionCreate(o->surSX(), baseY+order*50);
+    }
+}
+
+void SeqDiagram::EditEvent(QString newMsg, int id){
+    for( int i=0; i<eventList.count(); ++i ){
+        if(eventList[i].GetID() == id){
+            eventList[i].ChangeEventName(newMsg);
         }
     }
+}
 
-void SeqDiagram::PresunUdalostHore(int id){
-        SeqEvent* evt1 = NajdiUdalost(id);
-        if(evt1->Order() == 1){
-            return;
-        }
-        SeqEvent* evt2 = NajdiUdalostOrder(evt1->Order()-1);
-        evt2->NastavPoradie(evt1->Order());
-        evt1->NastavPoradie(evt1->Order()-1);
-        if(evt1->UdlTyp() == TypUdalosti::TVORBA_OBJEKTU){
-            SeqObject* o = NajdiObjekt(evt1->UdlTrieda2ID());
-            o->NastavPoziciuCreate(o->surSX(), evt1->Order()*50+zakladnaY);
-        }
-        if(evt2->UdlTyp() == TypUdalosti::TVORBA_OBJEKTU){
-            SeqObject* o = NajdiObjekt(evt2->UdlTrieda2ID());
-            o->NastavPoziciuCreate(o->surSX(), evt2->Order()*50+zakladnaY);
+void SeqDiagram::MoveDown(int id){
+    SeqEvent* evt1 = FindEvent(id);
+    if(evt1->GetOrder()+1 == eventOrder){
+        return;
+    }
+    SeqEvent* evt2 = FindEventOrder(evt1->GetOrder()+1);
+    evt2->SetOrder(evt1->GetOrder());
+    evt1->SetOrder(evt1->GetOrder()+1);
+    if(evt1->GetEventUdlType() == EventType::CREATE_OBJECT){
+        SeqObject* o = FindObject(evt1->GetEventClass2ID());
+        o->SetPositionCreate(o->surSX(), evt1->GetOrder()*50+baseY);
+    }
+    if(evt2->GetEventUdlType() == EventType::CREATE_OBJECT){
+        SeqObject* o = FindObject(evt2->GetEventClass2ID());
+        o->SetPositionCreate(o->surSX(), evt2->GetOrder()*50+baseY);
+    }
+}
+
+void SeqDiagram::MoveUp(int id){
+    SeqEvent* evt1 = FindEvent(id);
+    if(evt1->GetOrder() == 1){
+        return;
+    }
+    SeqEvent* evt2 = FindEventOrder(evt1->GetOrder()-1);
+    evt2->SetOrder(evt1->GetOrder());
+    evt1->SetOrder(evt1->GetOrder()-1);
+    if(evt1->GetEventUdlType() == EventType::CREATE_OBJECT){
+        SeqObject* o = FindObject(evt1->GetEventClass2ID());
+        o->SetPositionCreate(o->surSX(), evt1->GetOrder()*50+baseY);
+    }
+    if(evt2->GetEventUdlType() == EventType::CREATE_OBJECT){
+        SeqObject* o = FindObject(evt2->GetEventClass2ID());
+        o->SetPositionCreate(o->surSX(), evt2->GetOrder()*50+baseY);
+    }
+}
+
+void SeqDiagram::DeleteEvent(int id){
+    int order = 0;
+    for( int i=0; i<eventList.count(); ++i ){
+        if(eventList[i].GetID() == id){
+            order = eventList[i].GetOrder();
+            eventList.remove(i);
+            eventOrder--;
+            break;
         }
     }
+    for( int i=0; i<eventList.count(); ++i ){
+        if(eventList[i].GetOrder() > order){
+            eventList[i].SetOrder(eventList[i].GetOrder()-1);
+        }
+    }
+}
 
+void SeqDiagram::SaveDiagram(QString filename){
+    QFile file(filename);
+    if(!file.open(QIODevice::WriteOnly)){
+        return;
+    }
+    QString str = "title " + EscapeString(name) + " " + uuid + "\n";
+    file.write(str.toLatin1().data());
+    str = "nextobjid " + QString::number(objectID) + "\n";
+    file.write(str.toLatin1().data());
+    str = "nextevtid " + QString::number(eventID) + "\n";
+    file.write(str.toLatin1().data());
+    str = "nextnumevt " + QString::number(eventOrder) + "\n\n";
+    file.write(str.toLatin1().data());
+    for (SeqObject o : objectList){
+        str = "object " + QString::number(o.GetID()) + " " + EscapeString(o.GetObjName()) + " "  +  QString::number(o.GetClassID()) + " " + o.Coordinates() + "\n";
+        file.write(str.toLatin1().data());
+    }
+    file.write("\n");
+    for (SeqEvent evt : eventList){
+        str = "event " + QString::number(evt.GetID()) + " " + QString::number(evt.GetEventClass1ID()) + " " + QString::number(evt.GetEventClass2ID()) + " " + QString::number(evt.GetEventUdlType()) + " " + EscapeString(evt.GetEventName()) + " " + QString::number(evt.GetOrder()) +"\n";
+        file.write(str.toLatin1().data());
+    }
+    file.close();
+}
 
-
-void SeqDiagram::ZrusenieUdalosti(int id){
-        for( int i=0; i<zoznamUdalosti.count(); ++i ){
-            if(zoznamUdalosti[i].ID() == id){
-                zoznamUdalosti.remove(i);
+void SeqDiagram::LoadDiagram(QString filename){
+    QFile file(filename);
+    if(!file.open(QIODevice::ReadOnly)){
+        return;
+    }
+    QByteArray data;
+    data = file.readLine();
+    QStringList params = QString(data).split(" ");
+    if(params[0].compare("title") == 0){
+        QString title = params[1];
+        this->name = UnescapeString(title);
+        //this->uuid = params[2];
+    }
+    else{
+        file.close();
+        return;
+    }
+    data = file.readLine();
+    params = QString(data).split(" ");
+    if(params[0].compare("nextobjid") == 0){
+        this->objectID = params[1].toInt();
+    }
+    else{
+        file.close();
+        return;
+    }
+    data = file.readLine();
+    params = QString(data).split(" ");
+    if(params[0].compare("nextevtid") == 0){
+        this->eventID = params[1].toInt();
+    }
+    else{
+        file.close();
+        return;
+    }
+    data = file.readLine();
+    params = QString(data).split(" ");
+    if(params[0].compare("nextnumevt") == 0){
+        this->eventOrder = params[1].toInt();
+    }
+    else{
+        file.close();
+        return;
+    }
+    baseY = 0;
+    while(!file.atEnd()){
+        data = file.readLine();
+        if(data.startsWith("object")){
+            params = QString(data).split(" ");
+            if(params.length() != 8){
+                file.close();
                 return;
             }
+            int id = params[1].toInt();
+            int idt = params[3].toInt();
+            int x = params[4].toInt();
+            int y = params[5].toInt();
+            int width = params[6].toInt();
+            int height = params[7].toInt();
+            SeqObject* o = AddObject(UnescapeString(params[2]), id, idt);
+            o->SetPositionCreate(x, y);
+            o->SetSize(width, height);
+            if(o->surSY() == 100 && o->surSY() + o->surVY()/2 > baseY){
+                baseY = o->surSY() + o->surVY()/2;
+            }
+        }
+        else if(data.startsWith("event")){
+            params = QString(data).split(" ");
+            if(params.length() != 7){
+                file.close();
+                return;
+            }
+            int id = params[1].toInt();
+            int o1 = params[2].toInt();
+            int o2 = params[3].toInt();
+            int typ = params[4].toInt();
+            int poradie = params[6].toInt();
+            PridajUdalost(o1, o2, (EventType)typ, UnescapeString(params[5]), id, poradie, baseY);
         }
     }
+}
 
+QString SeqDiagram::EscapeString(QString src){
+    if(src.isEmpty()){
+        return "#EMPTY#";
+    }
+    QString dst = src.replace(" ", "#SPACE#");
+    return dst;
+}
+
+QString SeqDiagram::UnescapeString(QString src){
+    if(src.compare(("#EMPTY#")) == 0){
+        return "";
+    }
+    QString dst = src.replace("#SPACE#", " ");
+    return dst;
+}

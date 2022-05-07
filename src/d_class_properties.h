@@ -1,6 +1,9 @@
+#ifndef D_CLASS_PROPERTIES_H
+#define D_CLASS_PROPERTIES_H
 
 #include <iostream>
 #include <vector>  
+#include <QString>
 using namespace std;
 
 
@@ -48,16 +51,19 @@ class Method{
         string name;
         string return_type;
         string parameters;
+
         int id;
 
     public:
-        Method(int id, Visibility visibility, string name, string return_type, string parameters);
+        vector<string> vectorParam;
+
+        Method(int id, Visibility visibility, string name, string return_type,  vector<string> vectorParam);
 
         int getID();
 
         string getName();
         void changeName(string name);
-        
+
         Visibility getVisibility();
         void changeVisibility(Visibility visibility);
         string getVisibilityStr();
@@ -65,8 +71,8 @@ class Method{
         string getReturnType();
         void changeReturnType(string return_type);
 
-        string getParameters();
-        void changeParameters(string parameters);
+        void addParam(string new_par);
+        void removeParam(string par);
 };
 
 
@@ -110,25 +116,55 @@ class Class{
         string name;
         int id;
         int interface;
+        int min_height = 60;
+        int min_width = 60;
+
+    public:
+        int x;
+        int y;
+        int width;
+        int height;
+
         vector<Attribute*> attribVector;
         vector<Method*> methodVector;
 
-    public:
-        
         explicit Class(string name, int id, int interface);
         ~Class();
 
         string getName();
         void changeName(string name);
-        
+
+
         int getID();
         int getInterface();
-        
+        void changeInterface(int interface);
+
+        static Visibility strToVisbility(string str);
+        static RelationType strToRelation(string str);
+
         vector<Attribute*> getAttribVector();
         vector<Method*> getMethodVector();
 
-        void appendMethod(int id, Visibility visibility, string name, string return_type, string parameters);
-        
-        void appendAttribute(int id, Visibility visibility, string name, string return_type);
+        void appendMethod(int id, Visibility visibility, string name, string return_type, vector<string> vectorParam);
+        void removeMethod(int id);
+        void changeMethod(int id, Visibility visibility, string name, string return_type);
+        void changeParams(int id, vector<string> params);
+        int getIdByNameMethod(string name);
+        Method *getMethod(int id);
+
+        void appendAttribute(int id, Visibility visibility, string name, string type);
+        void removeAttribute(int id);
+        void changeAttribute(int id, Visibility visibility, string name, string type);
+        int getIdByNameAttribute(string name);
+        Attribute *getAttribute(int id);
+
+        // positions
+        void setMinHeight(int height);
+        void setMinWidth(int width);
+        void setPosition(int x, int y);
+        void changePosition(int off_x, int off_y);
+        void setSize(int width, int height);
+        void changeSize(int off_width, int off_height);
 
 };
+#endif

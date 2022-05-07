@@ -25,9 +25,17 @@ TEMPLATE = app
 CONFIG += c++11
 
 SOURCES += \
+    addeventdialog.cpp \
+    addattributedialog.cpp \
+    addclassdialog.cpp \
     addobjectdialog.cpp \
+    addrelationdialog.cpp \
+    changeclassdialog.cpp \
+    changerelationdialog.cpp \
     d_class_properties.cpp \
     diagram_class.cpp \
+  editmessagedialog.cpp \
+    editobjectdialog.cpp \
         main.cpp \
         mainwindow.cpp \
     clsdgrwidget.cpp \
@@ -37,9 +45,17 @@ SOURCES += \
     seqobject.cpp
 
 HEADERS += \
+    addeventdialog.h \
+    addattributedialog.h \
+    addclassdialog.h \
     addobjectdialog.h \
+    addrelationdialog.h \
+    changeclassdialog.h \
+    changerelationdialog.h \
     d_class_properties.h \
     diagram_class.h \
+    editmessagedialog.h \
+    editobjectdialog.h \
         mainwindow.h \
     clsdgrwidget.h \
     seqdiagram.h \
@@ -48,7 +64,15 @@ HEADERS += \
     seqobject.h
 
 FORMS += \
+        addeventdialog.ui \
+        addattributedialog.ui \
+        addclassdialog.ui \
         addobjectdialog.ui \
+        addrelationdialog.ui \
+        changeclassdialog.ui \
+        changerelationdialog.ui \
+        editmessagedialog.ui \
+        editobjectdialog.ui \
         mainwindow.ui
 
 # Default rules for deployment.

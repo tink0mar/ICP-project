@@ -1,23 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AddObjectDialog</class>
- <widget class="QDialog" name="AddObjectDialog">
+ <class>AddClassDialog</class>
+ <widget class="QDialog" name="AddClassDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>410</width>
+    <width>400</width>
     <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>70</y>
+     <width>101</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Name</string>
+   </property>
+  </widget>
   <widget class="QPushButton" name="btnOK">
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>240</y>
+     <y>220</y>
      <width>75</width>
      <height>24</height>
     </rect>
@@ -30,7 +43,7 @@
    <property name="geometry">
     <rect>
      <x>240</x>
-     <y>240</y>
+     <y>220</y>
      <width>75</width>
      <height>24</height>
     </rect>
@@ -39,47 +52,40 @@
     <string>Cancel</string>
    </property>
   </widget>
-  <widget class="QLabel" name="labName">
+  <widget class="QCheckBox" name="checkBox">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>50</y>
-     <width>51</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Name:</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="strName">
-   <property name="geometry">
-    <rect>
-     <x>200</x>
-     <y>50</y>
-     <width>141</width>
-     <height>31</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="labType">
-   <property name="geometry">
-    <rect>
-     <x>110</x>
-     <y>150</y>
-     <width>41</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Type:</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="comboType">
-   <property name="geometry">
-    <rect>
-     <x>200</x>
+     <x>160</x>
      <y>140</y>
+     <width>104</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Interface</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>60</y>
+     <width>181</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>96</width>
+     <height>0</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>60</y>
      <width>141</width>
      <height>31</height>
     </rect>

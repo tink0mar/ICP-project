@@ -5,28 +5,27 @@
 class SeqObject
 {
 public:
-    SeqObject(QString nazov, QString typ, int id, int idTriedy);
-    void NastavPoziciu(int px);
-    void UpravPoziciu(int offX);
-    void NastavPoziciuCreate(int px, int py);
-    void NastavVelkost(int sirka, int vyska);
-    void UpravVelkost(int offX, int offY);
+    SeqObject(QString name, int id, int classID);
+    void SetPosition(int px);
+    void ChangePosition(int offX);
+    void SetPositionCreate(int px, int py);
+    void SetSize(int width, int height);
     int surSX();
     int surSY();
     int surVX();
     int surVY();
-    QString Suradnice();
-    QString ObjNazov();
-    int IDTriedy();
-    void ZmenaObjNazvu(QString novyNazov);
-    QString ObjTyp();
-    void ZmenaObjTypu(QString novyTyp);
-    int ID();
+    QString Coordinates();
+    QString GetObjName();
+    int GetClassID();
+    void ChangeObjName(QString newName);
+    int GetObjType();
+    void ChangeObjType(int classID);
+    int GetID();
+    void ChangeSize(int offX, int offY);
 private:
     int id;
-    QString nazov;
-    QString typ;
-    int idTriedy;
+    QString name;
+    int classID;
     int sx;
     int sy;
     int vx;

@@ -2,63 +2,45 @@
 #define SEQDIAGRAM_H
 #include "seqobject.h"
 #include "seqevent.h"
+#include "diagram_class.h"
 #include <QString>
 #include <QList>
-
-class Trieda{
-public:
-    Trieda(){
-
-    }
-    QString Nazov(){
-        return "tata";
-    }
-};
-
-class DiagramTried{
-public:
-    DiagramTried(){
-        t1 = new Trieda();
-    }
-    Trieda* NajdiTriedu(int id){
-        (void)id;
-        return t1;
-    }
-private:
-    Trieda* t1;
-};
 
 class SeqDiagram
 {
 public:
-    SeqDiagram(QString nazov, DiagramTried* dTried);
-    QString Nazov();
-    void NastavUUID(QString uuid);
-    void NastavZakladnu(int zakladnaY);
-    QString UUID();
-    QList<SeqObject> ZoznamObjektov();
-    QList<SeqEvent> ZoznamUdalosti();
-    SeqObject* NajdiObjekt(int id);
-    SeqEvent *NajdiUdalost(int id);
-    SeqEvent *NajdiUdalostOrder(int order);
-    SeqObject* PridajObjekt(QString nazov, int id, int idTriedy);
-    void UpravObjekt(QString novyNazov, QString novyTyp, int id);
-    void ZrusenieObjektu(int id);
-    void PridajUdalost(int o1, int o2, TypUdalosti typ, QString popis, int id, int order, int zakladnaY);
-    void UpravUdalost(QString novyPopis, int id);
-    void PresunUdalostDole(int id);
-    void PresunUdalostHore(int id);
-    void ZrusenieUdalosti(int id);
+    SeqDiagram(QString nazov, DiagramClass* dTried);
+    void SetUUID(QString uuid);
+    void SetBase(int zakladnaY);
+    QString SetUUID();
+    QList<SeqObject> GetObjectList();
+    QList<SeqEvent> GetEventList();
+    SeqObject* FindObject(int id);
+    SeqEvent *FindEvent(int id);
+    SeqEvent *FindEventOrder(int order);
+    SeqObject* AddObject(QString nazov, int id, int idTriedy);
+    void EditObject(QString novyNazov, int classID, int id);
+    void PridajUdalost(int o1, int o2, EventType typ, QString popis, int id, int order, int zakladnaY);
+    void EditEvent(QString novyPopis, int id);
+    void MoveDown(int id);
+    void MoveUp(int id);
+    void DeleteEvent(int id);
+    QString GetName();
+    void DeleteObject(int id);
+    QString EscapeString(QString src);
+    QString UnescapeString(QString src);
+    void SaveDiagram(QString filename);
+    void LoadDiagram(QString filename);
 private:
-    int idUdalosti;
-    int idObjektu;
-    int poradUdalosti;
-    QString nazov;
-    QList<SeqObject> zoznamObjektov;
-    QList<SeqEvent> zoznamUdalosti;
-    DiagramTried* dTried;
+    int eventID;
+    int objectID;
+    int eventOrder;
+    QString name;
+    QList<SeqObject> objectList;
+    QList<SeqEvent> eventList;
+    DiagramClass* classD;
     QString uuid;
-    int zakladnaY;
+    int baseY;
 };
 
 #endif // SEQDIAGRAM_H
