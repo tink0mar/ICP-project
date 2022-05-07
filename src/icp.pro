@@ -25,7 +25,12 @@ TEMPLATE = app
 CONFIG += c++11
 
 SOURCES += \
+    addattributedialog.cpp \
+    addclassdialog.cpp \
     addobjectdialog.cpp \
+    addrelationdialog.cpp \
+    changeclassdialog.cpp \
+    changerelationdialog.cpp \
     d_class_properties.cpp \
     diagram_class.cpp \
         main.cpp \
@@ -37,7 +42,12 @@ SOURCES += \
     seqobject.cpp
 
 HEADERS += \
+    addattributedialog.h \
+    addclassdialog.h \
     addobjectdialog.h \
+    addrelationdialog.h \
+    changeclassdialog.h \
+    changerelationdialog.h \
     d_class_properties.h \
     diagram_class.h \
         mainwindow.h \
@@ -48,7 +58,12 @@ HEADERS += \
     seqobject.h
 
 FORMS += \
+        addattributedialog.ui \
+        addclassdialog.ui \
         addobjectdialog.ui \
+        addrelationdialog.ui \
+        changeclassdialog.ui \
+        changerelationdialog.ui \
         mainwindow.ui
 
 # Default rules for deployment.
