@@ -31,7 +31,7 @@ void SeqDiagram::SetBase(int baseY){
     this->baseY = baseY;
 }
 
-QString SeqDiagram::SetUUID(){
+QString SeqDiagram::GetUUID(){
     return uuid;
 }
 
@@ -105,7 +105,7 @@ void SeqDiagram::DeleteObject(int id){
     }
 }
 
-void SeqDiagram::PridajUdalost(int o1, int o2, EventType type, QString msg, int id, int order, int baseY){
+void SeqDiagram::AddEvent(int o1, int o2, EventType type, QString msg, int id, int order, int baseY){
     if(id == 0){
         id = eventID++;
     }
@@ -283,7 +283,7 @@ void SeqDiagram::LoadDiagram(QString filename){
             int o2 = params[3].toInt();
             int typ = params[4].toInt();
             int poradie = params[6].toInt();
-            PridajUdalost(o1, o2, (EventType)typ, UnescapeString(params[5]), id, poradie, baseY);
+            AddEvent(o1, o2, (EventType)typ, UnescapeString(params[5]), id, poradie, baseY);
         }
     }
 }

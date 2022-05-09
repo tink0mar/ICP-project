@@ -47,9 +47,7 @@ void AddEventDialog::on_btnOK_clicked()
     accept();
 }
 
-
 void AddEventDialog::on_btnCancel_clicked()
 {
     reject();
 }
-

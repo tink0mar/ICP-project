@@ -13,7 +13,14 @@ SeqDiagramWidget::SeqDiagramWidget(QWidget *parent)
 {    
     dragging=false;
     setMouseTracking(true);
+    sDiagram = NULL;
     evtTypes = {"SYNCHRONNA_SPRAVA", "ASYNCHRONNA_SPRAVA", "NAVRAT_SPRAVY", "TVORBA_OBJEKTU", "ZANIK_OBJEKTU"};
+}
+
+SeqDiagramWidget::~SeqDiagramWidget(){
+    if(sDiagram != NULL){
+        delete sDiagram;
+    }
 }
 
 void SeqDiagramWidget::CreateNewSeqDiagram(QString name, DiagramClass* classD){
@@ -342,7 +349,7 @@ void SeqDiagramWidget::FindBase(){
     sDiagram->SetBase(baseY);
 }
 
-int SeqDiagramWidget::VoVnutri(int kX, int kY){
+int SeqDiagramWidget::AboveObject(int kX, int kY){
     QList<SeqObject> zozObjekt = sDiagram->GetObjectList();
     for (SeqObject o : zozObjekt){
         if(kX >= o.surSX()-o.surVX()/2 && kX <= o.surSX()+o.surVX()/2 && kY >= o.surSY()-o.surVY()/2 && kY <= o.surSY()+o.surVY()/2){
@@ -352,7 +359,7 @@ int SeqDiagramWidget::VoVnutri(int kX, int kY){
     return 0;
 }
 
-int SeqDiagramWidget::VRohu(int kX, int kY){
+int SeqDiagramWidget::AboveCorner(int kX, int kY){
     QList<SeqObject> zozObjekt = sDiagram->GetObjectList();
     for (SeqObject o : zozObjekt){
         if(kX >= o.surSX()+o.surVX()/2-5 && kX <= o.surSX()+o.surVX()/2+5 && kY >= o.surSY()+o.surVY()/2-5 && kY <= o.surSY()+o.surVY()/2+5){
@@ -401,7 +408,7 @@ void SeqDiagramWidget::AddObject(){
 void SeqDiagramWidget::EditObject(){
     EditObjectDialog dlg;
     QStringList clsList;
-    SeqObject* o = sDiagram->FindObject(idVnutraObjektu);
+    SeqObject* o = sDiagram->FindObject(insideObjectID);
     int index = -1;
     for(unsigned int i = 0; i < classD->classList.size(); i++){
         Class* c = classD->classList[i];
@@ -418,7 +425,7 @@ void SeqDiagramWidget::EditObject(){
     if(dlg.exec() == QDialog::Accepted){
         int id = clsList.indexOf(dlg.GetType());
         int classID = classD->classList[id]->getID();
-        sDiagram->EditObject(dlg.GetName(), classID, idVnutraObjektu);
+        sDiagram->EditObject(dlg.GetName(), classID, insideObjectID);
         repaint();
     }
 }
@@ -447,7 +454,7 @@ void SeqDiagramWidget::AddEvent(){
         else{
             QString msg = dlg.GetMsg();
             int type = dlg.GetType();
-            sDiagram->PridajUdalost(zozObjekt[o1].GetID(), zozObjekt[o2].GetID(), (EventType)type, msg, 0, 0, baseY);
+            sDiagram->AddEvent(zozObjekt[o1].GetID(), zozObjekt[o2].GetID(), (EventType)type, msg, 0, 0, baseY);
             repaint();
         }
     }
@@ -488,17 +495,17 @@ void SeqDiagramWidget::DeleteEvent(){
 }
 
 void SeqDiagramWidget::DeleteObject(){
-    sDiagram->DeleteObject(idVnutraObjektu);
+    sDiagram->DeleteObject(insideObjectID);
     repaint();
 }
 
 void SeqDiagramWidget::AddActivation(){
-    sDiagram->PridajUdalost(idVnutraObjektu, idVnutraObjektu, EventType::ACTIVATION, "", 0, 0, baseY);
+    sDiagram->AddEvent(insideObjectID, insideObjectID, EventType::ACTIVATION, "", 0, 0, baseY);
     repaint();
 }
 
 void SeqDiagramWidget::AddDeactivation(){
-    sDiagram->PridajUdalost(idVnutraObjektu, idVnutraObjektu, EventType::DEACTIVATION, "", 0, 0, baseY);
+    sDiagram->AddEvent(insideObjectID, insideObjectID, EventType::DEACTIVATION, "", 0, 0, baseY);
     repaint();
 }
 
@@ -509,10 +516,6 @@ void SeqDiagramWidget::PopupMenu1(int x, int y){
     menu.addAction("Add object",this, SLOT(AddObject()));
     menu.addSeparator();
     menu.addAction("Add event",this, SLOT(AddEvent()));
-    //menu.addAction("Edit message");
-    //menu.addAction("Delete message");
-    //menu.addSeparator();
-
     QAction* act = menu.exec(mapToGlobal(pos));
     (void)act;
 }
@@ -548,18 +551,18 @@ void SeqDiagramWidget::mouseMoveEvent(QMouseEvent *event)
     int mx=event->x();
     int my=event->y();
     if(dragging){
-        if(idRohuObjektu > 0){
+        if(cornerObjectID > 0){
             int offX = mx - mousex;
             int offY = my - mousey;
-            sDiagram->FindObject(idRohuObjektu)->ChangeSize(offX, offY);
+            sDiagram->FindObject(cornerObjectID)->ChangeSize(offX, offY);
             mousex=mx;
             mousey=my;
             repaint();
 
         }
-        else if(idVnutraObjektu > 0){
+        else if(insideObjectID > 0){
             int offX = mx - mousex;
-            sDiagram->FindObject(idVnutraObjektu)->ChangePosition(offX);
+            sDiagram->FindObject(insideObjectID)->ChangePosition(offX);
             mousex=mx;
             mousey=my;
             repaint();
@@ -580,13 +583,13 @@ void SeqDiagramWidget::mouseMoveEvent(QMouseEvent *event)
 
     }
     else {
-        idRohuObjektu=VRohu(mx,my);
-        idVnutraObjektu=VoVnutri(mx,my);
+        cornerObjectID=AboveCorner(mx,my);
+        insideObjectID=AboveObject(mx,my);
         eventID = EventUnderCursor(mx, my);
-        if(idRohuObjektu > 0){
+        if(cornerObjectID > 0){
             setCursor(Qt::SizeFDiagCursor);
         }
-        else if(idVnutraObjektu > 0){
+        else if(insideObjectID > 0){
             setCursor(Qt::SizeAllCursor);
         }
         else if(eventID > 0){
@@ -615,13 +618,13 @@ void SeqDiagramWidget::mousePressEvent(QMouseEvent *event)
 void SeqDiagramWidget::mouseReleaseEvent(QMouseEvent *event){
     int mx=event->x();
     int my=event->y();
-    idRohuObjektu=VRohu(mx,my);
-    idVnutraObjektu=VoVnutri(mx,my);
+    cornerObjectID=AboveCorner(mx,my);
+    insideObjectID=AboveObject(mx,my);
     eventID = EventUnderCursor(mx, my);
-    if(idRohuObjektu > 0){
+    if(cornerObjectID > 0){
         setCursor(Qt::SizeFDiagCursor);
     }
-    else if(idVnutraObjektu > 0){
+    else if(insideObjectID > 0){
         setCursor(Qt::SizeAllCursor);
     }
     else if(eventID > 0){
@@ -634,10 +637,10 @@ void SeqDiagramWidget::mouseReleaseEvent(QMouseEvent *event){
         dragging=false;
     }
     if(event->button()==Qt::RightButton){
-        if(idRohuObjektu == 0 && idVnutraObjektu == 0 && eventID == 0){
+        if(cornerObjectID == 0 && insideObjectID == 0 && eventID == 0){
             PopupMenu1(event->x(), event->y());
         }
-        else if(idVnutraObjektu > 0){
+        else if(insideObjectID > 0){
             PopupMenu2(event->x(), event->y());
         }
         else if(eventID > 0){

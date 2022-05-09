@@ -12,71 +12,67 @@ SeqObject::SeqObject(QString name, int id, int classID)
 }
 
 void SeqObject::SetPosition(int px){
-      sx = px;
-  }
+    sx = px;
+}
 
 void SeqObject::ChangePosition(int offX){
-      sx = sx + offX;
-  }
+    sx = sx + offX;
+}
 
 void SeqObject::SetPositionCreate(int px, int py){
-      sx = px;
-      sy = py;
-  }
+    sx = px;
+    sy = py;
+}
 
 void SeqObject::SetSize(int width, int height){
-      vx = width;
-      vy = height;
-  }
+    vx = width;
+    vy = height;
+}
 
 void SeqObject::ChangeSize(int offX, int offY){
-      if(vx+offX > 50){
-          vx = vx + offX;
-      }
-      if(vy+offY > 50){
-          vy = vy + offY;
-      }
-  }
+    if(vx+offX > 50){
+        vx = vx + offX;
+    }
+    if(vy+offY > 50){
+        vy = vy + offY;
+    }
+}
 
 int SeqObject::surSX(){
-      return sx;
-  }
+    return sx;
+}
 
 int SeqObject::surSY(){
-      return sy;
-  }
+    return sy;
+}
 
 int SeqObject::surVX(){
-      return vx;
-  }
+    return vx;
+}
 int SeqObject::surVY(){
-      return vy;
-  }
+    return vy;
+}
 
 QString SeqObject::Coordinates(){
-      return QString::number(sx) + " " + QString::number(sy) + " " + QString::number(vx) + " " + QString::number(vy);
-  }
+    return QString::number(sx) + " " + QString::number(sy) + " " + QString::number(vx) + " " + QString::number(vy);
+}
 
 QString SeqObject::GetObjName(){
-      return name;
-  }
+    return name;
+}
 
 int SeqObject::GetClassID(){
-      return classID;
-  }
+    return classID;
+}
 
 void SeqObject::ChangeObjName(QString newName){
-      name = newName;
-  }
-
-int SeqObject::GetObjType(){
-      return classID;
-  }
+    name = newName;
+}
 
 void SeqObject::ChangeObjType(int classID){
-      this->classID = classID;
-  }
+    this->classID = classID;
+}
 
 int SeqObject::GetID(){
-      return id;
-  }
+    return id;
+}
