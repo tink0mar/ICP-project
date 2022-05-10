@@ -1,3 +1,10 @@
+/**
+ * @file mainwindow.h
+ * @author Peter Pločica (xploci01)
+ * @brief file represents main window
+ * @date 2022-05-10
+ *
+ */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include "clsdgrwidget.h"

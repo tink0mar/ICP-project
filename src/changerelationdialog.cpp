@@ -1,5 +1,6 @@
 #include "changerelationdialog.h"
 #include "ui_changerelationdialog.h"
+#include <QMessageBox>
 
 ChangeRelationDialog::ChangeRelationDialog(QWidget *parent) :
     QDialog(parent),
@@ -15,7 +16,13 @@ ChangeRelationDialog::~ChangeRelationDialog()
 
 void ChangeRelationDialog::on_btnOK_clicked()
 {
-    accept();
+    if (ui->lineEdit->displayText().size() != 0 &&
+        ui->lineEdit_2->displayText().size() != 0 &&
+        ui->lineEdit_3->displayText().size() != 0){
+        accept();
+    } else {
+        QMessageBox::warning(this, "WARNING", "Empty lines");
+    }
 }
 
 void ChangeRelationDialog::on_btnCancel_clicked()

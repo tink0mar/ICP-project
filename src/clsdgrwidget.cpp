@@ -8,7 +8,6 @@
 ClsDiagramWidget::ClsDiagramWidget(QWidget *parent)
     : QWidget{parent}
 {
-    alertDialog.setWindowTitle("Alert");
     dragging=false;
     fprintf(stderr, "tu\n");
     setMouseTracking(true);
@@ -19,25 +18,27 @@ void ClsDiagramWidget::CreateNewClsDiagram(QString diagramName){
         QString uuid = QUuid::createUuid().toString();
 
         clsDiagram = new DiagramClass(diagramName.toStdString());
-        /*
-        clsDiagram->appendClass("test1", getNextClassID(), 0);
-        clsDiagram->appendClass("test2", getNextClassID(), 0);
-        clsDiagram->setUUID(uuid);
+
+        clsDiagram->appendClass("test1", incNextClassID(), 0);
+        clsDiagram->appendClass("test2", incNextClassID(), 0);
         Class* cls = clsDiagram->getClass(0);
         cls->setPosition(250, 100);
 
         vector<string> vecParam;
-        vecParam.push_back("aa");
+        vecParam.push_back("boo");
 
-        cls->appendMethod(getNextMethodID(), Visibility::T_public, "boo", "boo_ret", vecParam);
-        cls->appendAttribute(getNextAttributeID(), Visibility::T_private, "foo", "int");
+        cls->appendMethod(cls->getNextAttribID(), Visibility::T_public, "foo", "foo_ret", vecParam);
+        cls->appendAttribute(cls->getNextMethodID(), Visibility::T_private, "goo", "int");
 
-        repaint();*/
-    }
+        repaint();
+}
 
 void ClsDiagramWidget::LoadClsDiagram(QString filename){
-    clsDiagram = new DiagramClass("test");
+    QStringList elements = filename.split('.');
+    clsDiagram = new DiagramClass(elements.at(0).toStdString());
     clsDiagram->loadDiagram(filename.toStdString());
+    next_class_id = clsDiagram->getNextClassID();
+    next_class_id = clsDiagram->getNextRelationID();
     repaint();
 }
 
@@ -46,19 +47,19 @@ DiagramClass* ClsDiagramWidget::getDiagramCls(){
 }
 
 int ClsDiagramWidget::getNextClassID(){
-    return next_class_id++;
+    return next_class_id;
 }
 
 int ClsDiagramWidget::getNextRelID(){
     return next_relation_id++;
 }
 
-int ClsDiagramWidget::getNextMethodID(){
-    return next_method_id++;
+int ClsDiagramWidget::incNextRelID(){
+    return next_relation_id++;
 }
 
-int ClsDiagramWidget::getNextAttributeID(){
-    return next_attribute_id++;
+int ClsDiagramWidget::incNextClassID(){
+    return next_class_id++;
 }
 
 int ClsDiagramWidget::findInside(int mx, int my){
@@ -206,169 +207,193 @@ void ClsDiagramWidget::paintEvent(QPaintEvent *)
         double dx = x2 - x1;
         double phi = qDegreesToRadians(30.0);
         double tphi = qDegreesToRadians(10.0);
-        int barb = 20;
-        qreal theta = qAtan2(dy, dx);
-        int x3 = x2 - (int)(barb * qCos(theta + phi));
-        int y3 = y2 - (int)(barb * qSin(theta + phi));
-        int x4 = x2 - (int)(barb * qCos(theta - phi));
-        int y4 = y2 - (int)(barb * qSin(theta - phi));
-        int x5 = x2 - (int)(barb * 2 * qCos(theta));
-        int y5 = y2 - (int)(barb * 2 * qSin(theta));
-        QVector<QPoint> points = {QPoint(x3, y3), QPoint(x2, y2), QPoint(x4, y4),QPoint(x5, y5)};
+        int prepon = 20;
+        qreal theta = qAtan2(dy, dx);        
+        int x3 = x2 - (int)(prepon * qCos(theta + phi));
+        int y3 = y2 - (int)(prepon * qSin(theta + phi));
+        int x4 = x2 - (int)(prepon * qCos(theta - phi));
+        int y4 = y2 - (int)(prepon * qSin(theta - phi));
+        int x5 = x2 - (int)(prepon * 2 * qCos(theta));
+        int y5 = y2 - (int)(prepon * 2 * qSin(theta));
 
+        QVector<QPoint> diamond = {QPoint(x3, y3), QPoint(x2, y2), QPoint(x4, y4),QPoint(x5, y5)};
+        QVector<QPoint> triangle = {QPoint(x3, y3), QPoint(x2, y2), QPoint(x4, y4)};
         int tx1;
         int ty1;
         int tx2;
         int ty2;
-        cerr << rel->getRelType() << "kokot";
+
         if(rel->getRelType() == T_generalization){
-            cerr << "asdsad";
-            QPolygon pol(points);
+            QPolygon pol(triangle);
+            QBrush brush(Qt::white);
+            QPainterPath path;
+            path.addPolygon(pol);
             painter.drawPolygon(pol);
+            painter.fillPath(path, brush);
         }
         else if(rel->getRelType() == T_composition){
-            QPolygon pol(points);
+            QPolygon pol(diamond);
+            QBrush brush(Qt::black);
+            QPainterPath path;
+            path.addPolygon(pol);
             painter.drawPolygon(pol);
+            painter.fillPath(path, brush);
+
         }
         else if(rel->getRelType() == T_aggregation){
-            QPolygon pol(points);
+            QPolygon pol(diamond);
+            QBrush brush(Qt::white);
+            QPainterPath path;
+            path.addPolygon(pol);
             painter.drawPolygon(pol);
+            painter.fillPath(path, brush);
+
         }
 
 
-        /*
-        if(sx1 < sx2){
+        if(x_1 < x_2){
             dy = y1 - y2;
             dx = x1 - x2;
-            theta = Math.atan2(dy, dx);
-            if(sy1 - vy1/2 > sy2){
-                tx1 = x1 - (int)(30 * Math.cos(theta - tphi)) - kardinalita1.length()*3 - 25;
+            theta = qAtan2(dy, dx);
+            if(y_1 - c1->height/2 > y_2){
+                tx1 = x1 - (int)(30 * qCos(theta - tphi)) - rel->getCardFirst().length()*3 - 25;
                 ty1 = y1 - 5;
-                g.drawString(kardinalita1, tx1, ty1);
+                 painter.drawText( tx1, ty1, QString::fromStdString(rel->getCardFirst()));
                 if(dx < 0){
                     dx = -dx;
                 }
                 if(dy < 0){
                     dy = -dy;
                 }
-                g.drawString(nazov, (int)(x1 + dx/2 - nazov.length()*5 - 25), (int)(y1 - dy/2));
+                painter.drawText((int)(x1 + dx/2 - rel->getName().length()*5 - 25), (int)(y1 - dy/2), QString::fromStdString(rel->getName()));
             }
-            else if(sy1 + vy1/2 < sy2){
-                tx1 = x1 - (int)(30 * Math.cos(theta + tphi)) - kardinalita1.length()*3 - 25;
+            else if(x_1 + c1->height/2 < y_2){
+                tx1 = x1 - (int)(30 * qCos(theta + tphi)) - rel->getCardFirst().length()*3 - 25;
                 ty1 = y1 + 15;
-                g.drawString(kardinalita1, tx1, ty1);
+                painter.drawText( tx1, ty1, QString::fromStdString(rel->getCardFirst()));
+
                 if(dx < 0){
                     dx = -dx;
                 }
                 if(dy < 0){
                     dy = -dy;
                 }
-                g.drawString(nazov, (int)(x1 + dx/2 - nazov.length()*6 - 20), (int)(y1 + dy/2 + 5));
+                painter.drawText( (int)(x1 + dx/2 - rel->getName().length()*6 - 20), (int)(y1 + dy/2 + 5), QString::fromStdString(rel->getName()));
             }
-            else{
-                tx1 = x1 + 5 + kardinalita1.length();
-                ty1 = y1 - (int)(30 * Math.sin(theta - tphi)) - 10;
-                g.drawString(kardinalita1, tx1, ty1);
+            else {
+                tx1 = x1 + 5 + rel->getCardFirst().length();
+                ty1 = y1 - (int)(30 * qSin(theta - tphi)) - 10;
+                painter.drawText(tx1, ty1, QString::fromStdString(rel->getCardFirst()));
                 if(dx < 0){
                     dx = -dx;
                 }
                 if(dy < 0){
                     dy = -dy;
                 }
-                if(sy1 > sy2){
-                    g.drawString(nazov, (int)(x1 + dx/2 - nazov.length()*3), (int)(y1 - dy/2 + nazov.length()*3) - 15);
+                if(y_1 > y_2){
+                    painter.drawText( (int)(x1 + dx/2 - rel->getName().length()*3), (int)(y1 - dy/2 + rel->getName().length()*3) - 15, QString::fromStdString(rel->getName()));
+
                 }
                 else{
-                    g.drawString(nazov, (int)(x1 + dx/2 - nazov.length()*3), (int)(y1 + dy/2 - nazov.length()*3) + 15);
+                    painter.drawText( (int)(x1 + dx/2 - rel->getName().length()*3), (int)(y1 + dy/2 - rel->getName().length()*3) + 15, QString::fromStdString(rel->getName()));
+
                 }
             }
         }
         else{
             dy = y1 - y2;
             dx = x1 - x2;
-            theta = Math.atan2(dy, dx);
-            if(sy1 - vy1/2 > sy2){
-                tx1 = x1 - (int)(30 * Math.cos(theta - tphi)) + kardinalita1.length() + 15;
+            theta = qAtan2(dy, dx);
+            if(y_1 - c1->height/2 > y_2){
+                tx1 = x1 - (int)(30 * qCos(theta - tphi)) + rel->getCardFirst().length() + 15;
                 ty1 = y1 - 5;
-                g.drawString(kardinalita1, tx1, ty1);
+                painter.drawText( tx1, ty1, QString::fromStdString(rel->getCardFirst()));
                 if(dx < 0){
                     dx = -dx;
                 }
                 if(dy < 0){
                     dy = -dy;
                 }
-                g.drawString(nazov, (int)(x1 - dx/2 + nazov.length()), (int)(y1 - dy/2));
+                painter.drawText( (int)(x1 - dx/2 + rel->getName().length()), (int)(y1 - dy/2), QString::fromStdString(rel->getName()));
+
             }
-            else if(sy1 + vy1/2 < sy2){
-                tx1 = x1 - (int)(30 * Math.cos(theta - tphi)) + kardinalita1.length() + 15;
+            else if(y_1 + c1->height/2 < y_2){
+                tx1 = x1 - (int)(30 * qCos(theta - tphi)) + rel->getCardFirst().length() + 15;
                 ty1 = y1 + 15;
-                g.drawString(kardinalita1, tx1, ty1);
+                painter.drawText(  tx1, ty1, QString::fromStdString(rel->getCardFirst()));
+
                 if(dx < 0){
                     dx = -dx;
                 }
                 if(dy < 0){
                     dy = -dy;
                 }
-                g.drawString(nazov, (int)(x1 - dx/2 + nazov.length() + 10), (int)(y1 + dy/2 + 5));
+                painter.drawText((int)(x1 - dx/2 + rel->getName().length() + 10), (int)(y1 + dy/2 + 5), QString::fromStdString(rel->getName()));
             }
             else{
-                tx1 = x1 - 25 - kardinalita1.length();
-                ty1 = y1 - (int)(30 * Math.sin(theta - tphi)) - 25;
-                g.drawString(kardinalita1, tx1, ty1);
+                tx1 = x1 - 25 - rel->getCardFirst().length();
+                ty1 = y1 - (int)(30 * qSin(theta - tphi)) - 25;
+                painter.drawText(tx1, ty1, QString::fromStdString(rel->getCardFirst()));
                 if(dx < 0){
                     dx = -dx;
                 }
                 if(dy < 0){
                     dy = -dy;
                 }
-                if(sy1 > sy2){
-                    g.drawString(nazov, (int)(x1 - dx/2 - nazov.length()*3), (int)(y1 - dy/2 + nazov.length()*3) - 15);
+                if(y_1 > y_2){
+                    painter.drawText((int)(x1 - dx/2 - rel->getName().length()*3), (int)(y1 - dy/2 + rel->getName().length()*3) - 15, QString::fromStdString(rel->getName()));
+
                 }
                 else{
-                    g.drawString(nazov, (int)(x1 - dx/2 - nazov.length()*3), (int)(y1 + dy/2 - nazov.length()*3) + 20);
+                    painter.drawText((int)(x1 - dx/2 - rel->getName().length()*3), (int)(y1 + dy/2 - rel->getName().length()*3) + 20, QString::fromStdString(rel->getName()));
                 }
             }
         }
-        if(sx1 > sx2){
+        if(x_1 > x_2){
             dy = y2 - y1;
             dx = x2 - x1;
-            theta = Math.atan2(dy, dx);
-            if(sy2 - vy2/2 > sy1){
-                tx2 = x2 - (int)(30 * Math.cos(theta - tphi)) - kardinalita2.length()*3 - 35;
+            theta = qAtan2(dy, dx);
+            if(y_2 - c2->height/2 > y_1){
+                tx2 = x2 - (int)(30 * qCos(theta - tphi)) - rel->getCardSecond().length()*3 - 35;
                 ty2 = y2 - 5;
-                g.drawString(kardinalita2, tx2, ty2);
+                 painter.drawText(tx2, ty2, QString::fromStdString(rel->getCardSecond()));
+
             }
-            else if(sy2 + vy2/2 < sy1){
-                tx2 = x2 - (int)(30 * Math.cos(theta + tphi)) - kardinalita2.length()*3 - 35;
+            else if(y_2 + c2->height/2 < y_1){
+                tx2 = x2 - (int)(30 * qCos(theta + tphi)) - rel->getCardSecond().length()*3 - 35;
                 ty2 = y2 + 15;
-                g.drawString(kardinalita2, tx2, ty2);
+                painter.drawText(tx2, ty2, QString::fromStdString(rel->getCardSecond()));
+
             }
             else{
-                tx2 = x2 + 5 + kardinalita2.length();
-                ty2 = y2 - (int)(30 * Math.sin(theta - tphi)) - 20;
-                g.drawString(kardinalita2, tx2, ty2);
+                tx2 = x2 + 5 + rel->getCardSecond().length();
+                ty2 = y2 - (int)(30 * qSin(theta - tphi)) - 20;
+                painter.drawText(tx2, ty2, QString::fromStdString(rel->getCardSecond()));
             }
         }
         else{
             dy = y2 - y1;
             dx = x2 - x1;
-            theta = Math.atan2(dy, dx);
-            if(sy2 - vy2/2 > sy1){
-                tx2 = x2 - (int)(30 * Math.cos(theta - tphi)) + kardinalita2.length() + 25;
+            theta = qAtan2(dy, dx);
+            if(y_2 - c2->height/2 > y_1){
+                tx2 = x2 - (int)(30 * qCos(theta - tphi)) + rel->getCardSecond().length() + 25;
                 ty2 = y2 - 5;
-                g.drawString(kardinalita2, tx2, ty2);
+                painter.drawText(tx2, ty2, QString::fromStdString(rel->getCardSecond()));
+
             }
-            else if(sy2 + vy2/2 < sy1){
-                tx2 = x2 - (int)(30 * Math.cos(theta - tphi)) + kardinalita1.length() + 25;
+            else if(y_2 + c2->height/2 < y_1){
+                tx2 = x2 - (int)(30 * qCos(theta - tphi)) + rel->getCardFirst().length() + 25;
                 ty2 = y2 + 15;
-                g.drawString(kardinalita2, tx2, ty2);
+                painter.drawText(tx2, ty2, QString::fromStdString(rel->getCardSecond()));
+
             }
             else{
-                tx2 = x2 - 25 - kardinalita1.length();
-                ty2 = y2 - (int)(30 * Math.sin(theta - tphi)) - 25;
-                g.drawString(kardinalita2, tx2, ty2);
+                tx2 = x2 - 25 - rel->getCardFirst().length();
+                ty2 = y2 - (int)(30 * qSin(theta - tphi)) - 25;
+                painter.drawText(tx2, ty2, QString::fromStdString(rel->getCardSecond()));
+
             }
-        }*/
+        }
 
     }
 
@@ -469,13 +494,15 @@ void ClsDiagramWidget::RemoveClass(){
 }
 
 void ClsDiagramWidget::ChangeClass(){
-    AddClassDialog dlg;
+    BasicDialog dlg;
     dlg.changeName(QString("Change Class name"));
     dlg.changeLabel(QString("New name"));
+    dlg.removeComboBox();
+
 
     Class *cls = clsDiagram->getClass(object_id);
     if (cls->getInterface() == 1){
-        dlg.checkCheckBox();
+        dlg.setCheckBox();
     }
 
     if(dlg.exec() == QDialog::Accepted){
@@ -499,13 +526,13 @@ void ClsDiagramWidget::AddAttribute(){
 
         Visibility vis = cls->strToVisbility(mod);
 
-        cls->appendAttribute(getNextAttributeID(), vis, name.toStdString(), type.toStdString());
+        cls->appendAttribute(cls->getNextAttribID(), vis, name.toStdString(), type.toStdString());
         repaint();
     }
 }
 
 void ClsDiagramWidget::ChangeAttribute(){
-    AddClassDialog dlg_cls;
+   BasicDialog dlg_cls;
     dlg_cls.changeName(QString("Change Attribute"));
     dlg_cls.removeCheckBox();
     dlg_cls.removeLineEdit();
@@ -519,6 +546,11 @@ void ClsDiagramWidget::ChangeAttribute(){
 
     for (auto att: cls->attribVector){
         dlg_cls.addItemComboBox(QString::fromStdString(att->getName()));
+    }
+
+    if (cls->attribVector.size() == 0){
+        QMessageBox::warning(this, "WARNING", "There is no attribute in class");
+        return;
     }
 
     if(dlg_cls.exec() == QDialog::Accepted){
@@ -549,7 +581,7 @@ void ClsDiagramWidget::ChangeAttribute(){
 }
 
 void ClsDiagramWidget::RemoveAttribute(){
-    AddClassDialog dlg;
+    BasicDialog dlg;
     dlg.changeName(QString("Remove Attribute"));
     dlg.removeCheckBox();
     dlg.removeLineEdit();
@@ -557,6 +589,11 @@ void ClsDiagramWidget::RemoveAttribute(){
 
     for (auto att: cls->attribVector){
         dlg.addItemComboBox(QString::fromStdString(att->getName()));
+    }
+
+    if (cls->attribVector.size() == 0){
+        QMessageBox::warning(this, "WARNING", "There is no attribute in class");
+        return;
     }
 
     if(dlg.exec() == QDialog::Accepted){
@@ -584,13 +621,13 @@ void ClsDiagramWidget::AddMethod(){
         Visibility vis = cls->strToVisbility(mod);
         vector<string> vec;
 
-        cls->appendMethod(getNextAttributeID(), vis, name.toStdString(), return_type.toStdString(), vec);
+        cls->appendMethod(cls->getNextMethodID(), vis, name.toStdString(), return_type.toStdString(), vec);
         repaint();
     }
 }
 
 void ClsDiagramWidget::ChangeMethod(){
-    AddClassDialog dlg_cls;
+    BasicDialog dlg_cls;
     dlg_cls.changeName(QString("Change Method"));
     dlg_cls.removeCheckBox();
     dlg_cls.removeLineEdit();
@@ -604,6 +641,11 @@ void ClsDiagramWidget::ChangeMethod(){
 
     for (auto met: cls->methodVector){
         dlg_cls.addItemComboBox(QString::fromStdString(met->getName()));
+    }
+
+    if (cls->methodVector.size() == 0){
+        QMessageBox::warning(this, "WARNING", "There is no method in class");
+        return;
     }
 
     if(dlg_cls.exec() == QDialog::Accepted){
@@ -638,7 +680,7 @@ void ClsDiagramWidget::ChangeMethod(){
 }
 
 void ClsDiagramWidget::addParameter(){
-    AddClassDialog dlg;
+    BasicDialog dlg;
     dlg.changeName(QString("Add Parameter to Method"));
     dlg.removeCheckBox();
     dlg.removeLineEdit();
@@ -650,13 +692,18 @@ void ClsDiagramWidget::addParameter(){
         dlg.addItemComboBox(QString::fromStdString(met->getName()));
     }
 
+    if (cls->methodVector.size() == 0){
+        QMessageBox::warning(this, "WARNING", "There is no method in class");
+        return;
+    }
+
     if(dlg.exec() == QDialog::Accepted){
 
         met_id = cls->getIdByNameMethod(dlg.getComboBoxContent().toStdString());
         repaint();
     }
 
-    AddClassDialog dlg_met;
+    BasicDialog dlg_met;
     dlg_met.changeName(QString("Add Parameter to Method"));
     dlg_met.changeLabel(QString("Name"));
     dlg_met.removeCheckBox();
@@ -673,7 +720,7 @@ void ClsDiagramWidget::addParameter(){
 
 void ClsDiagramWidget::removeParameter(){
 
-    AddClassDialog dlg;
+    BasicDialog dlg;
     dlg.changeName(QString("Add Parameter to Method"));
     dlg.removeCheckBox();
     dlg.removeLineEdit();
@@ -685,6 +732,11 @@ void ClsDiagramWidget::removeParameter(){
         dlg.addItemComboBox(QString::fromStdString(met->getName()));
     }
 
+    if (cls->methodVector.size() == 0){
+        QMessageBox::warning(this, "WARNING", "There is no method in class");
+        return;
+    }
+
     if(dlg.exec() == QDialog::Accepted){
         met_id = cls->getIdByNameMethod(dlg.getComboBoxContent().toStdString());
         repaint();
@@ -692,7 +744,7 @@ void ClsDiagramWidget::removeParameter(){
         return;
     }
 
-    AddClassDialog dlg_met;
+    BasicDialog dlg_met;
     dlg_met.changeName(QString("Add Parameter to Method"));
     dlg_met.changeLabel(QString("Name"));
     dlg_met.removeCheckBox();
@@ -701,6 +753,11 @@ void ClsDiagramWidget::removeParameter(){
 
     for (auto p: met->vectorParam){
         dlg_met.addItemComboBox(QString::fromStdString(p));
+    }
+
+    if (met->vectorParam.size() == 0){
+        QMessageBox::warning(this, "WARNING", "There is no paramterer in method");
+        return;
     }
 
 
@@ -714,7 +771,7 @@ void ClsDiagramWidget::removeParameter(){
 }
 
 void ClsDiagramWidget::RemoveMethod(){
-    AddClassDialog dlg;
+    BasicDialog dlg;
     dlg.changeName(QString("Remove Method"));
     dlg.removeCheckBox();
     dlg.removeLineEdit();
@@ -722,6 +779,11 @@ void ClsDiagramWidget::RemoveMethod(){
 
     for (auto met: cls->methodVector){
         dlg.addItemComboBox(QString::fromStdString(met->getName()));
+    }
+
+    if (cls->methodVector.size() == 0){
+        QMessageBox::warning(this, "WARNING", "There is no method in class");
+        return;
     }
 
     if(dlg.exec() == QDialog::Accepted){
@@ -768,12 +830,11 @@ void ClsDiagramWidget::AddRelation(){
         int second_id = clsDiagram->getIdByNameClass(name_second);
 
         if (!clsDiagram->checkRelation(first_id, second_id)){
-            alertDialog.setText("Bad combination of classes");
-            alertDialog.exec();
+            QMessageBox::warning(this, "WARNING", "Bad combination of classes");
             return;
         }
 
-        clsDiagram->appendRelation(getNextRelID(), first_id, second_id, card_first, card_second, Class::strToRelation(rel_type), name);
+        clsDiagram->appendRelation(incNextRelID(), first_id, second_id, card_first, card_second, Class::strToRelation(rel_type), name);
 
         repaint();
     }
@@ -781,7 +842,7 @@ void ClsDiagramWidget::AddRelation(){
 }
 
 void ClsDiagramWidget::ChangeRelation(){
-    AddClassDialog dlg;
+    BasicDialog dlg;
     dlg.changeName(QString("Change Method"));
     dlg.removeCheckBox();
     dlg.removeLineEdit();
@@ -793,8 +854,7 @@ void ClsDiagramWidget::ChangeRelation(){
     }
 
     if (clsDiagram->relationList.size() == 0){
-        alertDialog.setText("There is no relation to change");
-        alertDialog.exec();
+        QMessageBox::warning(this, "WARNING", "There is no relation to change");
         return;
     }
 
@@ -827,7 +887,7 @@ void ClsDiagramWidget::ChangeRelation(){
 }
 
 void ClsDiagramWidget::RemoveRelation(){
-    AddClassDialog dlg;
+    BasicDialog dlg;
     dlg.changeName(QString("Remove Method"));
     dlg.removeCheckBox();
     dlg.removeLineEdit();
@@ -839,8 +899,7 @@ void ClsDiagramWidget::RemoveRelation(){
     }
 
     if (clsDiagram->relationList.size() == 0){
-        alertDialog.setText("There is no relation to delete");
-        alertDialog.exec();
+        QMessageBox::warning(this, "WARNING", "There is no relation to delete");
         return;
     }
 
@@ -853,14 +912,19 @@ void ClsDiagramWidget::RemoveRelation(){
 }
 
 void ClsDiagramWidget::AddClass(){
-    AddClassDialog dlg;
+    BasicDialog dlg;
     dlg.changeName(QString("Add Class"));
     dlg.removeComboBox();
 
     if(dlg.exec() == QDialog::Accepted){
         QString q_name = dlg.getLineEditConent();
+        if (q_name.size() == 0){
+            QMessageBox::warning(this, "WARNING", "Empty line edit");
+            AddClass();
+            return;
+        }
         string name = q_name.toStdString();
-        Class *cls = clsDiagram->appendClass(name, getNextClassID(), dlg.getInterface());
+        Class *cls = clsDiagram->appendClass(name, incNextClassID(), dlg.getInterface());
         cls->setPosition(mousex, mousey);
 
         repaint();

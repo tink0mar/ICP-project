@@ -177,6 +177,22 @@ int Class::getInterface(){
     return interface;
 }   
 
+int Class::getNextMethodID(){
+    return next_method_id++;
+}
+
+int Class::getNextAttribID(){
+    return next_attribute_id++;
+}
+
+void Class::setNextAttribID(int id){
+    next_attribute_id = id;
+}
+
+void Class::setNextMethodID(int id){
+    next_method_id = id;
+}
+
 void Class::changeInterface(int interface){
     this->interface = interface;
 }
@@ -220,7 +236,6 @@ RelationType Class::strToRelation(string str){
 void Class::appendMethod(int id, Visibility visibility, string name, string return_type, vector<string> vectorParam){
     
     Method *met = new Method(id, visibility, name, return_type, vectorParam);
-
     methodVector.push_back(met);
 }
 
@@ -369,6 +384,7 @@ Relation::Relation( int id, int id_first, int id_second, string card_first, stri
     this->id_second = id_second;
     this->card_first = card_first;
     this->card_second = card_second;
+    this->rel_type = rel_type;
 
 }
 

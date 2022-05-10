@@ -1,3 +1,10 @@
+/**
+ * @file seqevent.h
+ * @author Peter Pločica (xploci01)
+ * @brief file represents sequence diagram event
+ * @date 2022-05-10
+ *
+ */
 #ifndef SEQEVENT_H
 #define SEQEVENT_H
 #include <QString>

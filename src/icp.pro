@@ -27,10 +27,8 @@ CONFIG += c++11
 SOURCES += \
     addeventdialog.cpp \
     addattributedialog.cpp \
-    addclassdialog.cpp \
     addobjectdialog.cpp \
     addrelationdialog.cpp \
-    changeclassdialog.cpp \
     changerelationdialog.cpp \
     d_class_properties.cpp \
     diagram_class.cpp \
@@ -42,15 +40,14 @@ SOURCES += \
     seqdiagram.cpp \
     seqdiagramwidget.cpp \
     seqevent.cpp \
-    seqobject.cpp
+    seqobject.cpp \
+    basicdialog.cpp
 
 HEADERS += \
     addeventdialog.h \
     addattributedialog.h \
-    addclassdialog.h \
     addobjectdialog.h \
     addrelationdialog.h \
-    changeclassdialog.h \
     changerelationdialog.h \
     d_class_properties.h \
     diagram_class.h \
@@ -61,19 +58,19 @@ HEADERS += \
     seqdiagram.h \
     seqdiagramwidget.h \
     seqevent.h \
-    seqobject.h
+    seqobject.h \
+    basicdialog.h
 
 FORMS += \
         addeventdialog.ui \
         addattributedialog.ui \
-        addclassdialog.ui \
         addobjectdialog.ui \
         addrelationdialog.ui \
-        changeclassdialog.ui \
         changerelationdialog.ui \
         editmessagedialog.ui \
         editobjectdialog.ui \
-        mainwindow.ui
+        mainwindow.ui \
+        basicdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

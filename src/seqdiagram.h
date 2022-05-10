@@ -1,3 +1,10 @@
+/**
+ * @file seqdiagram.h
+ * @author Peter Pločica (xploci01)
+ * @brief file represents sequence diagram
+ * @date 2022-05-10
+ *
+ */
 #ifndef SEQDIAGRAM_H
 #define SEQDIAGRAM_H
 

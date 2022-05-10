@@ -1,6 +1,14 @@
+/**
+ * @file seqobject.h
+ * @author Peter Pločica (xploci01)
+ * @brief file represents sequence diagram object
+ * @date 2022-05-10
+ *
+ */
 #ifndef SEQOBJECT_H
 #define SEQOBJECT_H
 #include <QString>
+
 
 /**
  * @brief SeqObject class used to create object.

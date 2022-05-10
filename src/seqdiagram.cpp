@@ -99,7 +99,7 @@ void SeqDiagram::DeleteObject(int id){
                     DeleteEvent(evt.GetID());
                 }
             }
-            objectList.remove(i);
+            objectList.removeAt(i);
             return;
         }
     }
@@ -169,7 +169,7 @@ void SeqDiagram::DeleteEvent(int id){
     for( int i=0; i<eventList.count(); ++i ){
         if(eventList[i].GetID() == id){
             order = eventList[i].GetOrder();
-            eventList.remove(i);
+            eventList.removeAt(i);
             eventOrder--;
             break;
         }

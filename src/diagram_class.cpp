@@ -6,17 +6,26 @@ using namespace std;
 DiagramClass::DiagramClass(string name){
 
     this->name = name;
-    next_class_id = 1;
-    next_relation_id = 1;
-
 }
 
 DiagramClass::DiagramClass(){
 
 }
 
-void DiagramClass::setUUID(QString uuid){
-    this->uuid = uuid;
+void DiagramClass::setNextRelationID(int id){
+    next_class_id = id;
+}
+
+void DiagramClass::setNextClassID(int id){
+    next_relation_id = id;
+}
+
+int DiagramClass::getNextRelationID(){
+    return next_relation_id;
+}
+
+int DiagramClass::getNextClassID(){
+    return next_class_id;
 }
 
 int DiagramClass::getIdByNameClass(string name){
@@ -103,13 +112,9 @@ bool DiagramClass::checkRelation(int id_first, int id_second){
 void DiagramClass::appendRelation( int id, int id_first, int id_second, string card_first, string card_second, RelationType rel_type, string name){
 
     Relation *rel = new Relation( id, id_first,id_second,card_first,card_second, rel_type,name);
-    cerr << rel->getID() << "sad" << endl;
     relationList.push_back(rel);
-    cerr << "tu";
-    for (auto *rel : relationList){
-        cerr << rel->getID()<< "sad" << endl;
-    }
-    cerr << "bu";
+
+
 }
 
 void DiagramClass::destroyRelation(int id){
@@ -218,6 +223,7 @@ void DiagramClass::loadDiagram(string filename){
 
             this->appendClass(name, class_id, interface);
             Class *cls = this->getClass(class_id);
+            this->setNextClassID(class_id);
             cls->setPosition(x, y);
             cls->setSize(width, height);
 
@@ -251,11 +257,11 @@ void DiagramClass::loadDiagram(string filename){
             int id_second = stoi(lineVector.at(3));
             string card_first = UnescapeString(QString::fromStdString(lineVector.at(4))).toStdString();
             string card_second = UnescapeString(QString::fromStdString(lineVector.at(5))).toStdString();
-            RelationType rel_type = static_cast<RelationType>( stoi(lineVector.at(2)));
-            string name = UnescapeString(QString::fromStdString(lineVector.at(6))).toStdString();
+            RelationType rel_type = static_cast<RelationType>( stoi(lineVector.at(6)));
+            string name = UnescapeString(QString::fromStdString(lineVector.at(7))).toStdString();
 
             this->appendRelation(id, id_first,id_second,card_first,card_second, rel_type,name);
-
+            this->setNextRelationID(id);
         }
     }
     buffer.close();
@@ -310,12 +316,5 @@ void DiagramClass::saveDiagram(string filename){
 
 }
 
-void DiagramClass::print(){
-
-    for (auto i: classList){
-        cout << i->getName() << " ";
-    }
-
-}
 
 

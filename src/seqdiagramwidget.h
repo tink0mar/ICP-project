@@ -1,3 +1,10 @@
+/**
+ * @file seqdiagramwidget.h
+ * @author Peter Pločica (xploci01)
+ * @brief file represents sequence diagram wdiget
+ * @date 2022-05-10
+ *
+ */
 #ifndef SEQDIAGRAMWIDGET_H
 #define SEQDIAGRAMWIDGET_H
 

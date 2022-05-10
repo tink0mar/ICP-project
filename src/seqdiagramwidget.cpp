@@ -14,7 +14,8 @@ SeqDiagramWidget::SeqDiagramWidget(QWidget *parent)
     dragging=false;
     setMouseTracking(true);
     sDiagram = NULL;
-    evtTypes = {"SYNCHRONNA_SPRAVA", "ASYNCHRONNA_SPRAVA", "NAVRAT_SPRAVY", "TVORBA_OBJEKTU", "ZANIK_OBJEKTU"};
+    QList<QString> list = {"SYNCHRONNA_SPRAVA", "ASYNCHRONNA_SPRAVA", "NAVRAT_SPRAVY", "TVORBA_OBJEKTU", "ZANIK_OBJEKTU"};
+    evtTypes = list;
 }
 
 SeqDiagramWidget::~SeqDiagramWidget(){
@@ -169,7 +170,7 @@ void SeqDiagramWidget::DrawEvent(QPainter* painter, SeqEvent evt){
     painter->setPen(pen);
     if(evt.GetEventUdlType() == EventType::SYNCHRONOUS_MESSAGE){
         painter->drawLine(sx1, sy, sx2, sy);
-        double phi = qDegreesToRadians(30);
+        double phi = qDegreesToRadians(30.0);
         int barb = 20;
         if(sx1 > sx2){
             int x3 = sx2 + (int)(barb * qCos(-phi));
@@ -233,7 +234,7 @@ void SeqDiagramWidget::DrawEvent(QPainter* painter, SeqEvent evt){
         painter->setPen(pen);
         painter->drawLine(sx1, sy, sx2, sy);
         painter->setPen(oldPen);
-        double phi = qDegreesToRadians(30);
+        double phi = qDegreesToRadians(30.0);
         int barb = 20;
         if(sx1 > sx2){
             int x3 = sx2 + (int)(barb * qCos(-phi));

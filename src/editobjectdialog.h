@@ -1,3 +1,10 @@
+/**
+ * @file editobjectdialog.h
+ * @author Peter Pločica (xploci01)
+ * @brief file represents edit object dialog
+ * @date 2022-05-10
+ *
+ */
 #ifndef EDITOBJECTDIALOG_H
 #define EDITOBJECTDIALOG_H
 

@@ -1,5 +1,6 @@
 #include "addrelationdialog.h"
 #include "ui_addrelationdialog.h"
+#include <QMessageBox>
 
 AddRelationDialog::AddRelationDialog(QWidget *parent) :
     QDialog(parent),
@@ -15,7 +16,14 @@ AddRelationDialog::~AddRelationDialog()
 
 void AddRelationDialog::on_btnOK_clicked()
 {
-    accept();
+    if (ui->lineEdit->displayText().size() != 0 ||
+        ui->lineEdit_2->displayText().size() != 0 ||
+        ui->lineEdit->displayText().size() != 0){
+        accept();
+    } else {
+        QMessageBox::warning(this, "WARNING", "Empty lines");
+    }
+
 }
 
 void AddRelationDialog::on_btnCancel_clicked()
