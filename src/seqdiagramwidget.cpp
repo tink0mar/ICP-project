@@ -100,6 +100,9 @@ void SeqDiagramWidget::DrawActive(QPainter* painter, int sx, int objID){
         }
         QBrush defBrush = painter->brush();
         painter->setBrush(Qt::black);
+        if(classD->getClass(sDiagram->FindObject(objID)->GetClassID()) == NULL){
+            painter->setBrush(Qt::red);
+        }
         painter->drawRect(sx - 5, baseY+por1*50, 10, (por2 - por1)*50);
         por1 = FindActivation(objID, por2);
         painter->setBrush(defBrush);
@@ -145,19 +148,18 @@ void SeqDiagramWidget::DrawEvent(QPainter* painter, SeqEvent evt){
     int nekonzistencia = 1;
     QPen pen;
     pen.setBrush(Qt::black);
-    if(classD->getClass(o1->GetClassID()) == NULL || classD->getClass(o2->GetClassID()) == NULL){
-        painter->setBrush(Qt::red);
-        pen.setBrush(Qt::red);
-    }
-    if(classD->getClass(o2->GetClassID()) != NULL && evt.GetEventUdlType() != EventType::RETURN_MESSAGE){
+    if(classD->getClass(o2->GetClassID()) != NULL && (evt.GetEventUdlType() == EventType::SYNCHRONOUS_MESSAGE || evt.GetEventUdlType() == EventType::ASYNCHRONOUS_MESSAGE)){
         vector<Method*> methodList = classD->getClass(o2->GetClassID())->methodVector;
         for(unsigned int i = 0; i < methodList.size(); i++){
-            if(evt.GetEventName().compare(QString::fromStdString(methodList[i]->getName())) == 0){
+            if(evt.GetEventName().startsWith(QString::fromStdString(methodList[i]->getName()))){
                 nekonzistencia = 0;
             }
         }
     }
-    if(evt.GetEventUdlType() == EventType::ACTIVATION || evt.GetEventUdlType() == EventType::DEACTIVATION){
+    if(evt.GetEventUdlType() == EventType::CREATE_OBJECT || evt.GetEventUdlType() == EventType::DESTROY_OBJECT || evt.GetEventUdlType() == EventType::RETURN_MESSAGE){
+        nekonzistencia = 0;
+    }
+    if((evt.GetEventUdlType() == EventType::ACTIVATION || evt.GetEventUdlType() == EventType::DEACTIVATION) && classD->getClass(o2->GetClassID()) != NULL){
         nekonzistencia = 0;
     }
     if(nekonzistencia == 1){
